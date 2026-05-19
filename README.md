@@ -2,15 +2,30 @@
 
 A Claude Code skill that turns SEO from a manual checklist into a repeatable, invocable workflow. One command audits 33 items. Another implements everything from scratch. Five sub-commands cover the full lifecycle from audit to deploy.
 
-Built for Angular SSR/SSG. The principles work with any framework.
+Works with **any website and any framework**. On first use, the skill asks for your site configuration (domain, site name, Twitter handle, etc.) and uses those values throughout all sub-commands.
 
 > **Based on:** Google's official [Optimizing your website for generative AI features on Google Search](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) guide (updated May 2026), the [llmstxt.org](https://llmstxt.org) specification, and [schema.org](https://schema.org) structured data standards.
 
 ## Why This Exists
 
-Every page on a modern web app needs the same SEO work: title tags, meta descriptions, Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs, sitemap entries, prerender routes. Doing it manually means copying patterns from docs, missing tags, and inconsistent quality across 79+ pages.
+Every page on a modern web app needs the same SEO work: title tags, meta descriptions, Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs, sitemap entries, prerender routes. Doing it manually means copying patterns from docs, missing tags, and inconsistent quality across pages.
 
 This skill encodes the entire process into 5 sub-commands that Claude Code can execute repeatably.
+
+### First-Time Setup
+
+On first use, the skill gathers your site configuration:
+
+| Variable | Example |
+|----------|---------|
+| `{SITE_NAME}` | Acme Corp |
+| `{DOMAIN}` | https://acme.com |
+| `{TWITTER_HANDLE}` | @acme |
+| `{SOCIAL_IMAGE_PATH}` | /assets/social/ |
+| `{BUILD_OUTPUT}` | dist/apps/web/browser |
+| `{SITEMAP_PATH}` | public/sitemap.xml |
+
+If your project has a `CLAUDE.md` with SEO patterns already defined, the skill extracts these values automatically.
 
 ## Install
 
@@ -71,14 +86,14 @@ The `audit` command checks every item that matters for modern SEO:
 | 22 | JSON-LD present | `<script type="application/ld+json">` |
 | 23 | Schema count | At least 2 types |
 | 24 | SSR-safe | Not wrapped in browser-only guard |
-| 25 | Cleanup | Removed in ngOnDestroy |
+| 25 | Cleanup | Removed on component destroy |
 | 26 | Appropriate types | Content schema + BreadcrumbList |
 
 ### Infrastructure (3 checks)
 | # | Check | Pass Criteria |
 |---|-------|---------------|
 | 27 | Sitemap entry | In sitemap.xml with correct priority |
-| 28 | Prerender route | In routes.txt for SSG |
+| 28 | Prerender route | Configured for static generation |
 | 29 | Social image | 1200x630 PNG exists |
 
 ### HTML Template (4 checks)
@@ -155,9 +170,9 @@ agentic-seo/
 
 ## Works With
 
-Built for **Angular SSR/SSG** with specific patterns for Angular's `Title`, `Meta`, `DOCUMENT`, and `PLATFORM_ID` services. The SEO principles, structured data patterns, audit methodology, and checklist verification work with any web framework:
+Works with **any web framework** that supports SSR or SSG. Code examples use Angular syntax but the SEO principles, structured data patterns, audit methodology, and checklist verification are framework-agnostic:
 
-- Angular (SSR/SSG) -- primary target
+- Angular (SSR/SSG)
 - Next.js / React
 - Nuxt / Vue
 - Astro, SvelteKit, or any SSR/SSG framework

@@ -1,17 +1,33 @@
 ---
 name: agentic-seo
-description: Audit, implement, and optimize SEO for 23blocks web pages following Google's AI optimization guide. Covers meta tags, Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs, llms.txt, sitemap, and AI-discoverability.
-version: 1.0.0
+description: Audit, implement, and optimize SEO for any website following Google's AI optimization guide. Covers meta tags, Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs, llms.txt, sitemap, and AI-discoverability.
+version: 2.0.0
 user-invocable: true
 argument-hint: "[audit|implement|structured-data|llms-txt|checklist] [target]"
-metadata:
-  org: 23blocks
-  applies-to: 23blocks web application (Angular SSR/SSG)
 ---
 
-# Agentic SEO -- 23blocks Standard
+# Agentic SEO
 
-Repeatable workflow for auditing and implementing SEO on any page in the 23blocks Angular web application. Covers Google's AI optimization guide, structured data, and the 23blocks SEO standards defined in CLAUDE.md.
+Repeatable workflow for auditing and implementing SEO on any web page. Covers Google's AI optimization guide, structured data, and modern SEO best practices.
+
+## First-Time Setup: Gather Site Configuration
+
+**Before running any sub-command for the first time in a session**, ask the user for their website details if not already known. Store these as working context:
+
+| Setting | Ask For | Example |
+|---------|---------|---------|
+| **Site Name** | "What is your site/company name?" | `Acme Corp` |
+| **Domain** | "What is your website domain?" | `https://acme.com` |
+| **Twitter Handle** | "What is your Twitter/X handle?" (optional) | `@acme_corp` |
+| **Social Image Path** | "Where are your social sharing images stored?" | `/assets/social/` |
+| **Social Links** | "Any social profile URLs?" (optional) | Twitter, GitHub, LinkedIn URLs |
+| **Framework** | "What framework is your site built with?" | Angular, React, Next.js, etc. |
+| **Build Output Path** | "Where does your built/prerendered HTML output to?" | `dist/apps/web/browser/` |
+| **Sitemap Path** | "Where is your sitemap.xml?" | `public/sitemap.xml` |
+
+If the project has a CLAUDE.md with SEO patterns already defined, read it and extract these values automatically instead of asking.
+
+Use these values as `{SITE_NAME}`, `{DOMAIN}`, `{TWITTER_HANDLE}`, `{SOCIAL_IMAGE_PATH}`, `{BUILD_OUTPUT}`, `{SITEMAP_PATH}` throughout all sub-commands.
 
 ## When to use this skill
 
@@ -42,10 +58,10 @@ Key rules from Google's official guide for AI-era SEO:
 ### Structured Data
 - JSON-LD in `<head>`, rendered server-side during SSR/SSG
 - At least 2 schema types per page (e.g., SoftwareApplication + BreadcrumbList)
-- CRITICAL: JSON-LD must NOT be wrapped in `isPlatformBrowser` guard -- it must render during SSR
+- CRITICAL for SSR frameworks: JSON-LD must NOT be wrapped in browser-only guards (e.g., `isPlatformBrowser` in Angular)
 
 ### Technical
-- Fast load times (prerendered static HTML via Angular SSG)
+- Fast load times (prerendered static HTML)
 - Mobile-friendly responsive design
 - Valid HTML, no broken links
 
@@ -55,11 +71,11 @@ Key rules from Google's official guide for AI-era SEO:
 - Don't duplicate content across pages
 - `llms.txt` is for non-Google agents; Google uses standard crawling
 
-## The 23blocks SEO Standard
+## SEO Implementation Pattern (Angular Example)
 
-Every Angular component that represents a routable page must implement these patterns.
+Every routable page component must implement these patterns. Adapt for your framework.
 
-### Required Imports
+### Required Imports (Angular)
 
 ```typescript
 import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
@@ -119,7 +135,7 @@ private updateCanonicalLink(url: string) {
 }
 ```
 
-### addStructuredData() -- NO isPlatformBrowser Guard
+### addStructuredData() -- NO Browser-Only Guard
 
 ```typescript
 private addStructuredData() {
@@ -153,18 +169,11 @@ private removeStructuredData() {
 
 When no sub-command is given, default to `audit` on the target path.
 
-## Reference Implementation
-
-The canonical example of a fully SEO-optimized page is:
-`apps/web/src/app/agents/agents-landing.component.ts`
-
-This component demonstrates all patterns: meta tags, OG, Twitter Cards, canonical URL, 4 JSON-LD schemas (SoftwareApplication, Organization, BreadcrumbList, FAQPage), and SSR-safe structured data injection.
-
 ## Anti-Patterns
 
-- **isPlatformBrowser on JSON-LD**: Never guard structured data with browser checks -- it must render during SSR/SSG
-- **Missing ngOnDestroy cleanup**: Always remove JSON-LD scripts to prevent duplication on SPA navigation
+- **Browser-only guard on JSON-LD**: Never guard structured data with browser checks (e.g., `isPlatformBrowser` in Angular) -- it must render during SSR/SSG
+- **Missing cleanup**: Always remove JSON-LD scripts on component destroy to prevent duplication during SPA navigation
 - **Hardcoded dates**: Use the current date for `dateModified` in schemas
 - **Generic descriptions**: Every page needs a unique, specific meta description
-- **Missing sitemap entry**: Every new page must be added to `apps/web/public/sitemap.xml`
-- **Missing routes.txt entry**: Every new page must be in `apps/web/routes.txt` for prerendering
+- **Missing sitemap entry**: Every new page must be added to the sitemap
+- **Missing prerender config**: Every new page must be configured for prerendering (e.g., routes.txt in Angular SSG)
