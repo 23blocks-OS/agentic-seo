@@ -1,7 +1,7 @@
 ---
 name: agentic-seo
 description: Audit, implement, and optimize SEO for any website following Google's AI optimization guide. Covers meta tags, Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs, llms.txt, sitemap, and AI-discoverability.
-version: 2.0.0
+version: 2.1.0
 user-invocable: true
 argument-hint: "[audit|implement|structured-data|llms-txt|checklist] [target]"
 ---
