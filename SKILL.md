@@ -166,8 +166,9 @@ private removeStructuredData() {
 | `structured-data [path]` | Add or update JSON-LD structured data | `reference/structured-data.md` |
 | `llms-txt` | Maintain llms.txt and llms-full.txt files | `reference/llms-txt.md` |
 | `checklist [path]` | Quick 15-item verification against prerendered HTML | `reference/checklist.md` |
+| `audit-build [dir]` | Audit every page of a built site, optionally diffed against the live build; framework-agnostic | `reference/audit-build.md` |
 
-When no sub-command is given, default to `audit` on the target path.
+When no sub-command is given, default to `audit` on the target path. Use `audit-build` when a change touches many pages (a rebuild, a migration, a redesign) or when you need to know what it does to pages that already rank.
 
 ## Anti-Patterns
 

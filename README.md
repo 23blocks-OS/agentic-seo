@@ -45,6 +45,7 @@ Or copy `SKILL.md` and the `reference/` folder into `.claude/skills/agentic-seo/
 | `/agentic-seo structured-data [path]` | Add/update JSON-LD schemas (7 types) |
 | `/agentic-seo llms-txt` | Maintain llms.txt and llms-full.txt |
 | `/agentic-seo checklist [path]` | 15-point verification against built HTML |
+| `/agentic-seo audit-build [dir]` | Whole-site audit of built HTML, with an optional diff against the live build |
 
 ```bash
 /agentic-seo audit /blocks/auth          # Full audit
