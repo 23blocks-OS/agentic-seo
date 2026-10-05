@@ -31,6 +31,8 @@ const schema = {
     'name': '{SITE_NAME}',
     'url': '{DOMAIN}'
   },
+  // OPTIONAL. Delete this block unless the offer is real and published.
+  // 'price': '0' and 'Free tier available' are placeholders; shipping them states a price and a free tier you may not have.
   'offers': {
     '@type': 'Offer',
     'price': '0',

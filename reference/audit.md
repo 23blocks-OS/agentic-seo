@@ -89,6 +89,14 @@ Read the component's template file and verify:
 | 32 | Image alt text | All `<img>` tags have descriptive `alt` | No empty or missing alt attributes |
 | 33 | Internal links | Links to related pages | At least 1 internal link to another page |
 
+## Judgement calls
+
+- **Check 3 (`keywords`)** is advisory. Google ignores the tag. Report it; do not let it lower the score of a page that is otherwise right.
+- **Checks 17 and 18 (`twitter:site`, `twitter:creator`)** apply only when the site has a handle. If `{TWITTER_HANDLE}` is empty, mark them N/A, not FAIL.
+- **Check 23 (schema count)** is advisory. Never add a schema to reach two.
+- **Check 32 (image alt)**: a missing `alt` fails. `alt=""` is valid for decoration (and is the right markup for it); list those for a human to confirm rather than failing them.
+- To audit many pages at once, or to compare a build against the live site, use `audit-build`.
+
 ## Generate Report
 
 ### SEO Audit Report: [Page Name]
