@@ -1,9 +1,13 @@
 ---
 name: agentic-seo
-description: Audit, implement, and optimize SEO for any website following Google's AI optimization guide. Covers meta tags, Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs, llms.txt, sitemap, and AI-discoverability.
-version: 2.1.0
+description: Audit, implement and optimize SEO for a website following Google's AI optimization guide, covering meta tags, Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs, llms.txt, sitemap and AI-discoverability. Use when auditing a site's SEO, adding or fixing meta tags or structured data, or making a site easier for search engines and AI assistants to find.
+allowed-tools: Read Write Edit Bash Glob Grep WebFetch
+compatibility: The build audit script needs Python 3 (standard library only)
 user-invocable: true
 argument-hint: "[audit|implement|structured-data|llms-txt|checklist] [target]"
+metadata:
+  author: 23blocks
+  version: 2.1.1
 ---
 
 # Agentic SEO
