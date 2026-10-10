@@ -8,7 +8,7 @@ Works with **any website and any framework**. On first use, the skill asks for y
 
 ## Why This Exists
 
-Every page on a modern web app needs the same SEO work: title tags, meta descriptions, Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs, sitemap entries, prerender routes. Doing it manually means copying patterns from docs, missing tags, and inconsistent quality across pages.
+Every page on a modern web app needs the same SEO work: title tags, meta descriptions, Open Graph, X/Twitter cards, JSON-LD structured data, canonical URLs, sitemap entries, prerender routes. Doing it manually means copying patterns from docs, missing tags, and inconsistent quality across pages.
 
 This skill encodes the entire process into 5 sub-commands that Claude Code can execute repeatably.
 
@@ -76,7 +76,7 @@ The `audit` command checks every item that matters for modern SEO:
 | 10-11 | description, url | Match meta/canonical |
 | 12-15 | image, width, height, locale | 1200x630 PNG, en_US |
 
-### Twitter Cards (6 checks)
+### X/Twitter cards (6 checks)
 | # | Check | Pass Criteria |
 |---|-------|---------------|
 | 16-21 | card, site, creator, title, description, image | `summary_large_image`, matching values |
@@ -93,7 +93,7 @@ The `audit` command checks every item that matters for modern SEO:
 ### Infrastructure (3 checks)
 | # | Check | Pass Criteria |
 |---|-------|---------------|
-| 27 | Sitemap entry | In sitemap.xml with correct priority |
+| 27 | Sitemap entry | In sitemap.xml with a correct `<loc>` (Google ignores `<priority>` and `<changefreq>`) |
 | 28 | Prerender route | Configured for static generation |
 | 29 | Social image | 1200x630 PNG exists |
 
@@ -114,9 +114,8 @@ Ready-to-use structured data templates for 7 schema types:
 | `SoftwareApplication` | Product and feature pages |
 | `Organization` | Company info (include on key pages) |
 | `BreadcrumbList` | Navigation context (every page) |
-| `FAQPage` | Pages with Q&A (enables rich snippets) |
-| `HowTo` | Setup guides, installation pages |
-| `WebPage` | Generic pages (about, contact, legal) |
+| `FAQPage` | Optional. Google stopped showing FAQ rich results on 2026-05-07; the markup is still valid schema.org |
+| `WebPage` | Generic pages (about, contact, legal); valid markup, no rich result |
 | `Article` | Blog posts, case studies |
 
 Each template includes complete JSON-LD with recommended field values. See [`reference/structured-data.md`](reference/structured-data.md).
@@ -161,7 +160,7 @@ agentic-seo/
 
 1. **SSR-safe structured data** -- JSON-LD must render during server-side rendering. Never wrap it in browser-only guards. If it's not in the prerendered HTML, search engines won't see it.
 
-2. **Minimum 2 schemas per page** -- Every page gets at least one content schema (SoftwareApplication, WebPage, FAQPage, etc.) plus a BreadcrumbList for navigation context.
+2. **Only schema that matches the visible content** -- add a content schema where it fits, plus a BreadcrumbList for deep pages. Never add a schema just to reach a count.
 
 3. **Unique meta descriptions** -- Every page needs its own compelling, specific description with a call-to-action. Generic descriptions hurt click-through rates.
 
