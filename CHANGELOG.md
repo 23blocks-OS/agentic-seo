@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.1
+
+- Description now says when to use the skill, so it triggers for SEO work and stays quiet otherwise.
+- Version moved under `metadata`; added `allowed-tools` and `compatibility`.
+
 ## 2.1.0 - 2026-10-05
 
 ### Added
