@@ -1,59 +1,74 @@
-# agentic-seo
+# agentic-seo: Claude Code skill for SEO audits and implementation
 
-A Claude Code skill that turns SEO from a manual checklist into a repeatable, invocable workflow. One command audits 33 items. Another implements everything from scratch. Five sub-commands cover the full lifecycle from audit to deploy.
+[![Claude Code skill](https://img.shields.io/badge/Claude_Code-skill-D97757)](https://docs.claude.com/en/docs/claude-code/skills)
+[![License: MIT](https://img.shields.io/github/license/23blocks-OS/agentic-seo)](LICENSE)
 
-Works with **any website and any framework**. On first use, the skill asks for your site configuration (domain, site name, Twitter handle, etc.) and uses those values throughout all sub-commands.
+**agentic-seo is an agent skill (`SKILL.md`) that lets Claude Code audit and implement SEO for a website:** meta tags, canonical URLs, Open Graph, X/Twitter cards, JSON-LD structured data, sitemap entries and crawler controls.
 
-> **Based on:** Google's official [Optimizing your website for generative AI features on Google Search](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) guide (updated May 2026), the [llmstxt.org](https://llmstxt.org) specification, and [schema.org](https://schema.org) structured data standards.
+It works with any website and any framework that renders HTML on the server or at build time (Angular, Next.js, Nuxt, Astro, SvelteKit and others). Code examples use Angular syntax; the checks are framework-agnostic.
 
-## Why This Exists
+## What it does
 
-Every page on a modern web app needs the same SEO work: title tags, meta descriptions, Open Graph, X/Twitter cards, JSON-LD structured data, canonical URLs, sitemap entries, prerender routes. Doing it manually means copying patterns from docs, missing tags, and inconsistent quality across pages.
-
-This skill encodes the entire process into 5 sub-commands that Claude Code can execute repeatably.
-
-### First-Time Setup
-
-On first use, the skill gathers your site configuration:
-
-| Variable | Example |
-|----------|---------|
-| `{SITE_NAME}` | Acme Corp |
-| `{DOMAIN}` | https://acme.com |
-| `{TWITTER_HANDLE}` | @acme |
-| `{SOCIAL_IMAGE_PATH}` | /assets/social/ |
-| `{BUILD_OUTPUT}` | dist/apps/web/browser |
-| `{SITEMAP_PATH}` | public/sitemap.xml |
-
-If your project has a `CLAUDE.md` with SEO patterns already defined, the skill extracts these values automatically.
+- **Audits one page** against a 33-point checklist and returns a pass/fail table (`audit`).
+- **Audits a whole site** from its built HTML with a Python script, optionally diffed against the live build to catch regressions on pages that already rank (`audit-build`).
+- **Implements SEO on a new page**: title, description, canonical, Open Graph, X/Twitter cards, JSON-LD, sitemap and prerender route (`implement`).
+- **Adds JSON-LD** only where it matches visible content (`structured-data`).
+- **Maintains `llms.txt`** if the site owner wants one, and **explains crawler controls** for Google and AI vendors without taking sides (`llms-txt`, `crawler-controls`).
+- **Verifies built HTML** with a 15-point checklist (`checklist`).
 
 ## Install
 
+### Option 1: through the AI Maestro plugin
+
+The skill is part of the `ai-maestro` plugin from [ai-maestro-plugins](https://github.com/23blocks-OS/ai-maestro-plugins):
+
 ```bash
-# Copy into your Claude Code skills directory
+claude plugin marketplace add 23blocks-OS/ai-maestro-plugins
+claude plugin install ai-maestro@ai-maestro-plugins
+```
+
+Claude Code namespaces plugin skills, so the command may appear as `/ai-maestro:agentic-seo`.
+
+### Option 2: standalone
+
+```bash
 git clone https://github.com/23blocks-OS/agentic-seo.git ~/.claude/skills/agentic-seo
 ```
 
-Or copy `SKILL.md` and the `reference/` folder into `.claude/skills/agentic-seo/`.
+The whole-site audit needs Python 3 (standard library only). If you only want the page-level workflows, copy `SKILL.md` and the `reference/` folder into `~/.claude/skills/agentic-seo/`; add `scripts/` too for `audit-build`.
 
-## Sub-Commands
-
-| Command | What It Does |
-|---------|-------------|
-| `/agentic-seo audit [path]` | 33-check SEO audit with pass/fail table |
-| `/agentic-seo implement [path]` | Full SEO implementation from scratch |
-| `/agentic-seo structured-data [path]` | Add/update JSON-LD schemas (7 types) |
-| `/agentic-seo llms-txt` | Maintain llms.txt and llms-full.txt |
-| `/agentic-seo checklist [path]` | 15-point verification against built HTML |
-| `/agentic-seo audit-build [dir]` | Whole-site audit of built HTML, with an optional diff against the live build |
+## Usage
 
 ```bash
-/agentic-seo audit /blocks/auth          # Full audit
-/agentic-seo implement /new-feature      # Build SEO from zero
-/agentic-seo structured-data /about      # Add JSON-LD schemas
-/agentic-seo llms-txt                    # Update AI agent discovery files
-/agentic-seo checklist /blocks/auth      # Quick verify after build
+/agentic-seo audit /blocks/auth          # audit one page
+/agentic-seo implement /new-feature      # build SEO for a new page
+/agentic-seo structured-data /about      # add or update JSON-LD
+/agentic-seo checklist /blocks/auth      # quick check of the built HTML
+/agentic-seo audit-build dist/web        # audit every built page
 ```
+
+The build audit can also run directly:
+
+```bash
+python3 scripts/audit_build.py BUILD_DIR --domain https://acme.com [--baseline BASE_DIR] [--csv out.csv]
+python3 scripts/audit_build.py --self-test
+```
+
+Exit code `0` means no page failed a hard check; `1` means at least one did; `2` means bad arguments.
+
+On first use the skill asks for your site configuration (name, domain, X/Twitter handle, social image path, framework, build output and sitemap path), or reads it from `CLAUDE.md` if your project already defines it.
+
+## Sub-commands
+
+| Command | What it does |
+|---------|-------------|
+| `/agentic-seo audit [path]` | 33-check SEO audit of one page, pass/fail table |
+| `/agentic-seo implement [path]` | SEO implementation for a new page |
+| `/agentic-seo structured-data [path]` | Add or update JSON-LD schemas |
+| `/agentic-seo llms-txt` | Maintain `llms.txt`, only if the owner wants it |
+| `/agentic-seo crawler-controls` | Neutral guide to Google AI feature controls and vendor crawler tokens |
+| `/agentic-seo checklist [path]` | 15-point verification against built HTML |
+| `/agentic-seo audit-build [dir]` | Whole-site audit of built HTML, with an optional diff against the live build |
 
 ## The 33-Point Audit
 
@@ -64,7 +79,7 @@ The `audit` command checks every item that matters for modern SEO:
 |---|-------|---------------|
 | 1 | Title tag | 50-60 chars, includes primary keyword |
 | 2 | Meta description | 150-160 chars, unique, includes CTA |
-| 3 | Keywords | 5-15 relevant terms |
+| 3 | Keywords | Advisory only: Google ignores it |
 | 4 | Robots | `index, follow` directive |
 | 5 | Author | Present |
 | 6 | Canonical URL | Full URL matching the page route |
@@ -85,10 +100,10 @@ The `audit` command checks every item that matters for modern SEO:
 | # | Check | Pass Criteria |
 |---|-------|---------------|
 | 22 | JSON-LD present | `<script type="application/ld+json">` |
-| 23 | Schema count | At least 2 types |
+| 23 | Schema fit | Each schema matches visible content; no minimum count |
 | 24 | SSR-safe | Not wrapped in browser-only guard |
 | 25 | Cleanup | Removed on component destroy |
-| 26 | Appropriate types | Content schema + BreadcrumbList |
+| 26 | Appropriate types | Types fit the page (for example Article, BreadcrumbList); FAQPage and HowTo not needed |
 
 ### Infrastructure (3 checks)
 | # | Check | Pass Criteria |
@@ -105,91 +120,80 @@ The `audit` command checks every item that matters for modern SEO:
 | 32 | Image alt text | All images have descriptive alt |
 | 33 | Internal links | At least 1 link to related page |
 
-## JSON-LD Templates
+## JSON-LD templates
 
-Ready-to-use structured data templates for 7 schema types:
+Templates for six schema types, to use only where the type matches visible page content:
 
 | Schema Type | Use Case |
 |-------------|----------|
 | `SoftwareApplication` | Product and feature pages |
-| `Organization` | Company info (include on key pages) |
-| `BreadcrumbList` | Navigation context (every page) |
-| `FAQPage` | Optional. Google stopped showing FAQ rich results on 2026-05-07; the markup is still valid schema.org |
-| `WebPage` | Generic pages (about, contact, legal); valid markup, no rich result |
+| `Organization` | Company info |
+| `BreadcrumbList` | Navigation context on deep pages |
 | `Article` | Blog posts, case studies |
+| `WebPage` | Generic pages (about, contact, legal); valid markup, no rich result |
+| `FAQPage` | Optional. Google stopped showing FAQ rich results on 2026-05-07 |
 
-Each template includes complete JSON-LD with recommended field values. See [`reference/structured-data.md`](reference/structured-data.md).
+See [`reference/structured-data.md`](reference/structured-data.md). Run Google's Rich Results Test and the Schema Markup Validator before calling a page done.
 
-## Google AI Optimization: What Matters
+## What Google says about AI search
 
-This skill is informed by Google's [AI optimization guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide). Key takeaways encoded in the skill:
+As of 2026-10-10, Google's guide [Optimizing your website for generative AI features on Google Search](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) (last updated 2026-07-10) says:
 
-**Do:**
-- Create valuable, non-commodity content with a unique point of view
-- Build clear technical structure (crawlable, indexed, proper headings)
-- Use semantic HTML with logical heading hierarchy
-- Make content eligible for Google Search snippets first
-- Use structured data for rich results eligibility
+- You do not need new machine-readable files, AI text files, markup or Markdown to appear in Google Search.
+- Structured data is not required for generative AI search, and there is no special schema.org markup to add.
+- Google Search does not use `llms.txt`; having one neither harms nor helps visibility or rankings there.
+- Content does not need to be broken into tiny pieces.
 
-**Don't:**
-- Create special machine-readable files just for Google AI (Google crawls your pages directly)
-- Break content into tiny chunks thinking AI prefers it
-- Rewrite content in a specific way for generative AI search
-- Pursue inauthentic mentions across the web
+So this skill does not promise that structured data, `llms.txt` or special markup improves visibility in Google AI features. Standard SEO applies: crawlable, indexed pages with useful content. Structured data is still worth adding for rich-result eligibility where Google supports the type. Re-check the guide before relying on this; it changes.
 
-**On structured data**, Google clarifies it isn't required for AI search features, but remains valuable for rich results and overall SEO. This skill treats it as a best practice for complete SEO coverage.
+## Key principles
 
-**On llms.txt**, Google doesn't use it. The `llms-txt` sub-command exists for non-Google AI agents (Claude, GPT, etc.) that do respect the [llmstxt.org](https://llmstxt.org) standard.
+1. **SSR-safe structured data.** JSON-LD must be in the server-rendered or prerendered HTML, not behind a browser-only guard.
+2. **Schema that matches the page.** Never add a schema type to reach a count.
+3. **Unique meta descriptions and canonical URLs** on every page.
+4. **Sitemap and prerender route** for every page that should be found. Set `lastmod` only when it is accurate; Google ignores `priority` and `changefreq`.
+5. **Measure performance** with Core Web Vitals (LCP, INP, CLS).
 
-## File Structure
+## File structure
 
 ```
 agentic-seo/
-├── SKILL.md                        # Main skill definition
-├── README.md                       # This file
-├── LICENSE                         # MIT License
+├── SKILL.md                  # skill definition
+├── README.md
+├── CHANGELOG.md
+├── LICENSE                   # MIT
+├── scripts/audit_build.py    # whole-site audit of built HTML
 └── reference/
-    ├── audit.md                    # 33-check SEO audit workflow
-    ├── implement.md                # Implement SEO on a new page
-    ├── structured-data.md          # JSON-LD schema templates (7 types)
-    ├── llms-txt.md                 # llms.txt maintenance guide
-    └── checklist.md                # Quick 15-point build verification
+    ├── audit.md  audit-build.md  checklist.md  implement.md
+    ├── structured-data.md  llms-txt.md  crawler-controls.md
 ```
 
-## Key Principles
+## Part of the AI Maestro ecosystem
 
-1. **SSR-safe structured data** -- JSON-LD must render during server-side rendering. Never wrap it in browser-only guards. If it's not in the prerendered HTML, search engines won't see it.
+agentic-seo ships in the `ai-maestro` plugin for [AI Maestro](https://ai-maestro.23blocks.com), a dashboard and orchestrator for fleets of AI coding agents ([source on GitHub](https://github.com/23blocks-OS/ai-maestro)). It also works on its own in any Claude Code setup.
 
-2. **Only schema that matches the visible content** -- add a content schema where it fits, plus a BreadcrumbList for deep pages. Never add a schema just to reach a count.
+## Related skills
 
-3. **Unique meta descriptions** -- Every page needs its own compelling, specific description with a call-to-action. Generic descriptions hurt click-through rates.
+- [agentic-sql](https://github.com/23blocks-OS/agentic-sql): safe, read-only SQL against production databases, with a saved query library.
+- [agentic-support](https://github.com/23blocks-OS/agentic-support): numbered support cases and runbooks.
 
-4. **Canonical URLs on every page** -- Prevents duplicate content issues, especially with SPA navigation and prerendered routes.
+## Changelog
 
-5. **Sitemap + prerender route** -- A page that isn't in the sitemap and isn't prerendered is invisible to search engines.
-
-## Works With
-
-Works with **any web framework** that supports SSR or SSG. Code examples use Angular syntax but the SEO principles, structured data patterns, audit methodology, and checklist verification are framework-agnostic:
-
-- Angular (SSR/SSG)
-- Next.js / React
-- Nuxt / Vue
-- Astro, SvelteKit, or any SSR/SSG framework
+See [CHANGELOG.md](CHANGELOG.md). Contributions are welcome; see [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
 ## References
 
-- [Google: Optimizing for generative AI features](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) -- the official guide this skill is based on
-- [Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features) -- how AI features appear in search
-- [Google: Succeeding in AI search](https://developers.google.com/search/blog/2025/05/succeeding-in-ai-search) -- blog post on content strategy
-- [schema.org](https://schema.org) -- structured data vocabulary
-- [llmstxt.org](https://llmstxt.org) -- the llms.txt specification for AI agent discovery
-- [Open Graph Protocol](https://ogp.me) -- social sharing metadata standard
+- [Google: Optimizing for generative AI features](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
+- [Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)
+- [Google: Succeeding in AI search](https://developers.google.com/search/blog/2025/05/succeeding-in-ai-search)
+- [schema.org](https://schema.org)
+- [llmstxt.org](https://llmstxt.org), the `llms.txt` specification
+- [Open Graph Protocol](https://ogp.me)
 
 ## License
 
-[MIT](LICENSE)
+MIT. See [LICENSE](LICENSE).
 
 ---
 
-Built by [23blocks](https://23blocks.com) -- the backend-as-a-service with 18 blocks and 203 agent-ready skills.
+Built by [23blocks](https://23blocks.com).
