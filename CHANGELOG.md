@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.0 - 2026-10-21
+
+### Added
+- `reference/search-console-notices.md` and the `notices` sub-command: how to investigate a Search Console notice or an unknown URL (for example "Merchant listings" issues on a site that sells nothing). Covers Domain-property scope, host and subdomain enumeration, a cloaking test, history search with controls, the URL Inspection fields that matter, and the Removals tool steps for a prefix. Says what not to do: do not add shipping or returns terms to clear a notice, do not block in `robots.txt`.
+- `structured-data.md`: "Property and type pitfalls". Check each property's types on schema.org (`provider` is for `Service`, not for `LocalBusiness` subtypes: use `parentOrganization`). `Product` and `Offer` only for things sold.
+- `checklist.md`: "Navigation and launch checks" (section labels link to the index, sections reachable from the header, a new-page launch list, analytics events and privacy text, consent request test).
+- `audit.md`: "Method notes" (positive controls, median of three lab runs, keyless PageSpeed 429, total versus floor, captcha is a stop sign, tool overlap).
+- `audit_build.py --strict-claims` also fails merchant-listing markup (`Product`, `Offer`, `gtin`, `shippingDetails`, `hasMerchantReturnPolicy`). `--self-test` covers it with a clean control and a planted page; a mutation test confirmed the planted page fails without the new pattern.
+
 ## 2.2.0 - 2026-10-10
 
 ### Changed
