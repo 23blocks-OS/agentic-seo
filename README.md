@@ -166,6 +166,7 @@ agentic-seo/
 └── reference/
     ├── audit.md  audit-build.md  checklist.md  implement.md
     ├── structured-data.md  llms-txt.md  crawler-controls.md
+    ├── search-console-notices.md
 ```
 
 ## Part of the AI Maestro ecosystem
